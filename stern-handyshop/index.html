@@ -151,11 +151,12 @@ section{padding:96px 0;position:relative}
 .phone-link:hover{color:var(--accent)}
 
 /* ---------- Hero ---------- */
-.hero{padding:120px 0 110px;overflow:hidden;position:relative}
-.hero-bg{position:absolute;inset:0;z-index:0;pointer-events:none}
+.hero{padding:120px 0 110px;overflow:hidden;overflow-x:hidden;position:relative;width:100%;max-width:100%;box-sizing:border-box}
+/* full-bleed decorative layer, clipped to the hero and never wider than it */
+.hero-bg{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;width:100%;max-width:100%}
 /* engineered grid + glow, pure CSS, no photo */
 .hero-bg .grid{
-  position:absolute;inset:-2px;
+  position:absolute;inset:0;
   background-image:linear-gradient(var(--line) 1px,transparent 1px),
                    linear-gradient(90deg,var(--line) 1px,transparent 1px);
   background-size:54px 54px;
@@ -164,8 +165,10 @@ section{padding:96px 0;position:relative}
   opacity:.6;
 }
 .hero-bg .glow{
-  position:absolute;width:620px;height:620px;border-radius:50%;
-  right:-120px;top:-180px;
+  /* width capped at 100% of the hero so it can't overflow on any screen;
+     positioned with right:0 (no negative bleed) — the soft edge fades out anyway */
+  position:absolute;width:100%;max-width:620px;height:620px;border-radius:50%;
+  right:0;top:-180px;
   background:radial-gradient(circle,var(--accent-soft) 0%,transparent 60%);
   filter:blur(10px);
 }
