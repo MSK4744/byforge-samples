@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stern Handyshop &amp; Handy Reparatur | Display, Akku, Wasserschaden – Filialen in ganz Deutschland</title>
+<meta name="description" content="Stern Handyshop: Schnelle, günstige und professionelle Handy-Reparatur an Filialen in ganz Deutschland. Display, Akku, Ladeport, Wasserschaden u.v.m. Gleichtags-Service möglich.">
+
+<!-- =====================================================================
+     STERN HANDYSHOP & HANDY REPARATUR — KOBLENZ
+     Single-file sample website. Embedded CSS + JS. No frameworks, no build.
+     Opens directly in browser. GitHub-Pages deployable.
+
+     ---------------------------------------------------------------------
+     DESIGN DECISIONS
+     ---------------------------------------------------------------------
+     • Aesthetic: "precision workshop" — tool-steel surfaces, sharp edges,
+       generous whitespace, hairline borders. Reads like a professional
+       repair bench, not a neon gamer site or a WhatsApp flyer.
+
+     • Palette (justified):
+         --ink   #16161F  deep charcoal — calm, premium, low eye strain.
+                          Cooler/darker than #1A1A2E so the accent pops more.
+         --panel #1F1F2B  raised surface for cards (subtle elevation).
+         --line  rgba(255,255,255,.09) hairline borders = "engineered" look.
+         --paper #F4F6FB  near-white text — softer than pure #FFF on dark.
+         --accent #3A86FF electric blue. Chosen because: (1) it signals
+                          *electronics / diagnostics* (the blue of circuit
+                          LEDs and multimeters), (2) high contrast on charcoal
+                          for clear CTAs, (3) it is calm/trustworthy, not the
+                          aggressive lime/magenta of "edgy" dark themes.
+         --wa    #25D366  WhatsApp brand green — used ONLY for WA actions so
+                          the accent blue stays meaningful (= primary action).
+
+     • Typography: Inter (geometric grotesque) for everything. Headings use
+       tight tracking + heavy weight for an engineered, confident voice;
+       body stays at a readable 400/500. System-font fallback if offline.
+
+     • Signature element: the Leistungen card grid — each service is one tile
+       with a single-stroke SVG icon, a name, and a one-line description.
+       Hairline borders + hover lift = a clean "workshop menu".
+
+     • Motion: restrained. Smooth scroll + a single fade/rise on scroll via
+       IntersectionObserver. Respects prefers-reduced-motion.
+
+     ---------------------------------------------------------------------
+     PLACEHOLDERS — replace before going live
+     ---------------------------------------------------------------------
+     [1] Google Maps iframe: currently uses the public maps "?output=embed"
+         query URL for "Altlöhrtor 2-4, 56068 Koblenz". For production,
+         generate a proper Maps Embed API key + place ID, or use the
+         "Embed a map" share link from Google Maps.
+     [2] Logo: text-only wordmark "Stern Handyshop". Swap for an SVG/PNG
+         logo file if available.
+     [3] info@stern-handyshop.de — confirm this mailbox is live.
+     [4] Social links / Impressum / Datenschutz pages: footer links are
+         placeholders (#) — add real legal pages (required in Germany).
+     [5] Phone formatting: tel:026198862086 and wa.me/4926198862086 are wired
+         exactly as supplied. Verify the WhatsApp business number is active.
+     ===================================================================== -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+/* ---------- Tokens ---------- */
+:root{
+  --ink:#16161F;
+  --ink-2:#1B1B26;
+  --panel:#1F1F2B;
+  --panel-2:#262633;
+  --line:rgba(255,255,255,.09);
+  --line-strong:rgba(255,255,255,.16);
+  --paper:#F4F6FB;
+  --muted:#A2A6B8;
+  --accent:#3A86FF;
+  --accent-soft:rgba(58,134,255,.12);
+  --wa:#25D366;
+  --radius:14px;
+  --maxw:1160px;
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --font:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font);
+  background:var(--ink);
+  color:var(--paper);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+a{color:inherit;text-decoration:none}
+img,svg{display:block}
+.container{width:100%;max-width:var(--maxw);margin:0 auto;padding:0 24px}
+
+/* section rhythm */
+section{padding:96px 0;position:relative}
+.eyebrow{
+  display:inline-block;font-size:.78rem;font-weight:700;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--accent);margin-bottom:14px;
+}
+.section-title{
+  font-size:clamp(1.8rem,3.4vw,2.6rem);font-weight:800;letter-spacing:-.02em;
+  line-height:1.1;margin-bottom:14px;
+}
+.section-sub{color:var(--muted);max-width:560px;font-size:1.02rem}
+.section-head{margin-bottom:48px}
+
+/* ---------- Buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;gap:9px;font-weight:600;font-size:.96rem;
+  padding:13px 22px;border-radius:11px;border:1px solid transparent;cursor:pointer;
+  transition:transform .18s var(--ease),background .18s var(--ease),box-shadow .18s var(--ease);
+  white-space:nowrap;
+}
+.btn svg{width:18px;height:18px;flex:none}
+.btn:hover{transform:translateY(-2px)}
+.btn-primary{background:var(--accent);color:#fff;box-shadow:0 8px 24px -10px var(--accent)}
+.btn-primary:hover{box-shadow:0 14px 30px -10px var(--accent)}
+.btn-wa{background:var(--wa);color:#06351a}
+.btn-wa:hover{box-shadow:0 12px 28px -12px var(--wa)}
+.btn-ghost{background:transparent;color:var(--paper);border-color:var(--line-strong)}
+.btn-ghost:hover{background:rgba(255,255,255,.05)}
+
+/* ---------- Header ---------- */
+.header{
+  position:sticky;top:0;z-index:60;
+  background:rgba(22,22,31,.72);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);
+  transition:box-shadow .25s var(--ease),background .25s var(--ease);
+}
+.header.scrolled{box-shadow:0 10px 30px -18px #000;background:rgba(22,22,31,.92)}
+.header-inner{display:flex;align-items:center;justify-content:space-between;height:70px;gap:18px}
+.logo{display:flex;align-items:center;gap:11px;font-weight:800;letter-spacing:-.02em;font-size:1.18rem}
+.logo .mark{
+  width:34px;height:34px;border-radius:9px;flex:none;
+  background:linear-gradient(135deg,var(--accent),#2a64c8);
+  display:grid;place-items:center;box-shadow:0 6px 16px -8px var(--accent);
+}
+.logo .mark svg{width:20px;height:20px}
+.logo b{color:var(--accent)}
+.header-actions{display:flex;align-items:center;gap:12px}
+.phone-link{display:flex;align-items:center;gap:8px;font-weight:600;color:var(--paper);font-size:.95rem}
+.phone-link svg{width:17px;height:17px;color:var(--accent)}
+.phone-link:hover{color:var(--accent)}
+
+/* ---------- Hero ---------- */
+.hero{padding:120px 0 110px;overflow:hidden;position:relative}
+.hero-bg{position:absolute;inset:0;z-index:0;pointer-events:none}
+/* engineered grid + glow, pure CSS, no photo */
+.hero-bg .grid{
+  position:absolute;inset:-2px;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),
+                   linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:54px 54px;
+  -webkit-mask-image:radial-gradient(120% 90% at 70% 10%,#000 0%,transparent 70%);
+          mask-image:radial-gradient(120% 90% at 70% 10%,#000 0%,transparent 70%);
+  opacity:.6;
+}
+.hero-bg .glow{
+  position:absolute;width:620px;height:620px;border-radius:50%;
+  right:-120px;top:-180px;
+  background:radial-gradient(circle,var(--accent-soft) 0%,transparent 60%);
+  filter:blur(10px);
+}
+.hero-inner{position:relative;z-index:1;display:grid;grid-template-columns:1.15fr .85fr;gap:50px;align-items:center}
+.badge{
+  display:inline-flex;align-items:center;gap:8px;font-size:.82rem;font-weight:600;
+  color:var(--paper);background:var(--accent-soft);border:1px solid rgba(58,134,255,.3);
+  padding:7px 14px;border-radius:99px;margin-bottom:22px;
+}
+.badge .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px rgba(58,134,255,.2)}
+.hero h1{
+  font-size:clamp(2.1rem,5vw,3.5rem);font-weight:900;line-height:1.05;letter-spacing:-.03em;margin-bottom:20px;
+}
+.hero h1 .hl{color:var(--accent)}
+.hero p.lead{font-size:1.12rem;color:var(--muted);max-width:520px;margin-bottom:32px}
+.hero-cta{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:30px}
+.hero-trust{display:flex;flex-wrap:wrap;gap:22px;color:var(--muted);font-size:.9rem}
+.hero-trust span{display:flex;align-items:center;gap:8px}
+.hero-trust svg{width:16px;height:16px;color:var(--accent)}
+
+/* hero phone illustration (pure SVG) */
+.hero-art{display:flex;justify-content:center}
+.hero-art svg{width:100%;max-width:330px;height:auto;filter:drop-shadow(0 30px 50px rgba(0,0,0,.5))}
+
+/* ---------- Service grid (signature) ---------- */
+.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.service-card{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:26px;position:relative;overflow:hidden;
+  transition:transform .22s var(--ease),border-color .22s var(--ease),background .22s var(--ease);
+}
+.service-card::after{
+  content:"";position:absolute;left:0;top:0;height:3px;width:0;background:var(--accent);
+  transition:width .3s var(--ease);
+}
+.service-card:hover{transform:translateY(-4px);border-color:var(--line-strong);background:var(--panel-2)}
+.service-card:hover::after{width:100%}
+.service-ico{
+  width:46px;height:46px;border-radius:11px;display:grid;place-items:center;margin-bottom:16px;
+  background:var(--accent-soft);border:1px solid rgba(58,134,255,.25);
+}
+.service-ico svg{width:24px;height:24px;color:var(--accent)}
+.service-card h3{font-size:1.12rem;font-weight:700;letter-spacing:-.01em;margin-bottom:6px}
+.service-card p{color:var(--muted);font-size:.94rem;line-height:1.5}
+
+/* ---------- Why us ---------- */
+.why{background:var(--ink-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.why-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.why-item{
+  text-align:left;padding:26px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+}
+.why-ico{width:44px;height:44px;border-radius:11px;display:grid;place-items:center;margin-bottom:16px;
+  background:var(--accent-soft);border:1px solid rgba(58,134,255,.25)}
+.why-ico svg{width:23px;height:23px;color:var(--accent)}
+.why-item h3{font-size:1.04rem;font-weight:700;margin-bottom:6px}
+.why-item p{color:var(--muted);font-size:.9rem}
+
+/* ---------- Steps ---------- */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;counter-reset:step}
+.step{position:relative;padding:30px 26px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius)}
+.step .num{
+  counter-increment:step;font-size:.8rem;font-weight:800;color:var(--accent);
+  letter-spacing:.1em;margin-bottom:14px;display:flex;align-items:center;gap:12px;
+}
+.step .num::before{content:"0" counter(step);font-size:2.4rem;line-height:1;font-weight:900;color:rgba(58,134,255,.22)}
+.step h3{font-size:1.18rem;font-weight:700;letter-spacing:-.01em;margin-bottom:8px}
+.step p{color:var(--muted);font-size:.95rem}
+.step .arrow{position:absolute;right:-16px;top:50%;transform:translateY(-50%);color:var(--line-strong);z-index:2}
+.step .arrow svg{width:26px;height:26px}
+
+/* ---------- Contact ---------- */
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:30px}
+.panel h3{font-size:1.2rem;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.panel h3 svg{width:20px;height:20px;color:var(--accent)}
+.hours{width:100%;border-collapse:collapse}
+.hours td{padding:13px 0;border-bottom:1px solid var(--line);font-size:.98rem}
+.hours tr:last-child td{border-bottom:none}
+.hours td:last-child{text-align:right;font-weight:600;color:var(--paper)}
+.hours td.closed{color:var(--muted);font-weight:600}
+.hours tr.today td{color:var(--accent)}
+.open-pill{display:inline-flex;align-items:center;gap:8px;margin-top:18px;font-size:.86rem;font-weight:600;
+  background:rgba(37,211,102,.12);color:#5be39a;border:1px solid rgba(37,211,102,.3);padding:7px 13px;border-radius:99px}
+.open-pill .dot{width:8px;height:8px;border-radius:50%;background:#25D366;box-shadow:0 0 0 4px rgba(37,211,102,.18)}
+.contact-list{list-style:none;display:flex;flex-direction:column;gap:16px;margin-bottom:22px}
+.contact-list li{display:flex;align-items:flex-start;gap:14px;font-size:.98rem}
+.contact-list .ci{width:38px;height:38px;flex:none;border-radius:10px;display:grid;place-items:center;
+  background:var(--accent-soft);border:1px solid rgba(58,134,255,.25)}
+.contact-list .ci svg{width:19px;height:19px;color:var(--accent)}
+.contact-list .lbl{display:block;font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px}
+.contact-list a:hover{color:var(--accent)}
+.map-wrap{margin-top:6px;border-radius:12px;overflow:hidden;border:1px solid var(--line);line-height:0}
+.map-wrap iframe{width:100%;height:260px;border:0;filter:grayscale(.3) contrast(1.05)}
+.contact-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px}
+
+/* ---------- Footer ---------- */
+.footer{border-top:1px solid var(--line);padding:46px 0 40px;background:var(--ink-2)}
+.footer-inner{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:20px}
+.footer .logo{font-size:1.05rem}
+.footer-links{display:flex;flex-wrap:wrap;gap:22px;font-size:.9rem;color:var(--muted)}
+.footer-links a:hover{color:var(--accent)}
+.footer-copy{color:var(--muted);font-size:.86rem;margin-top:22px;border-top:1px solid var(--line);padding-top:22px}
+
+/* ---------- Standorte (branch directory) ---------- */
+.loc-pills{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:34px}
+.loc-pill{
+  font-family:var(--font);font-weight:600;font-size:.92rem;color:var(--paper);
+  background:var(--panel);border:1px solid var(--line);border-radius:99px;
+  padding:10px 18px;cursor:pointer;
+  transition:transform .18s var(--ease),background .18s var(--ease),border-color .18s var(--ease),color .18s var(--ease);
+}
+.loc-pill:hover{transform:translateY(-2px);border-color:var(--line-strong);background:var(--panel-2)}
+.loc-pill[aria-selected="true"]{
+  background:var(--accent);border-color:var(--accent);color:#fff;
+  box-shadow:0 8px 22px -10px var(--accent);
+}
+.loc-stage{position:relative}
+.loc-panel{display:none}
+.loc-panel.active{display:block;animation:locFade .4s var(--ease)}
+@keyframes locFade{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.loc-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.loc-card{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:26px;position:relative;
+}
+.loc-card .city-tag{
+  display:inline-flex;align-items:center;gap:8px;font-size:.78rem;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;
+}
+.loc-card .city-tag svg{width:15px;height:15px}
+.loc-card h3{font-size:1.12rem;font-weight:700;letter-spacing:-.01em;margin-bottom:6px}
+.loc-card .addr{color:var(--paper);font-size:.98rem;margin-bottom:14px}
+.loc-card .services{color:var(--muted);font-size:.9rem;margin-bottom:16px}
+.loc-meta{list-style:none;display:flex;flex-direction:column;gap:10px}
+.loc-meta li{display:flex;align-items:center;gap:11px;font-size:.92rem}
+.loc-meta .mi{width:32px;height:32px;flex:none;border-radius:9px;display:grid;place-items:center;
+  background:var(--accent-soft);border:1px solid rgba(58,134,255,.25)}
+.loc-meta .mi svg{width:16px;height:16px;color:var(--accent)}
+.loc-meta a:hover{color:var(--accent)}
+.loc-note{
+  display:inline-flex;align-items:center;gap:8px;font-size:.84rem;font-weight:600;
+  background:rgba(255,193,71,.1);color:#f0c150;border:1px solid rgba(255,193,71,.28);
+  padding:7px 13px;border-radius:99px;margin-top:6px;
+}
+.loc-note .dot{width:8px;height:8px;border-radius:50%;background:#f0c150}
+.loc-info{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px;align-items:start}
+.loc-info .panel{padding:26px}
+.loc-info .contact-actions{margin-top:22px}
+.loc-contact-note{color:var(--muted);font-size:.88rem;margin-top:16px;line-height:1.6}
+.loc-contact-note a{color:var(--paper);font-weight:600}
+.loc-contact-note a:hover{color:var(--accent)}
+.loc-map-missing{display:grid;place-items:center;text-align:center;min-height:260px;
+  border:1px dashed var(--line-strong);border-radius:12px;color:var(--muted);font-size:.92rem;padding:24px}
+@media(max-width:980px){
+  .loc-info{grid-template-columns:1fr}
+}
+@media(max-width:680px){
+  .loc-cards{grid-template-columns:1fr}
+}
+
+/* ---------- Floating WhatsApp (mobile) ---------- */
+.wa-float{
+  position:fixed;right:18px;bottom:18px;z-index:80;display:none;
+  width:58px;height:58px;border-radius:50%;background:var(--wa);
+  align-items:center;justify-content:center;box-shadow:0 12px 30px -8px rgba(37,211,102,.6);
+  animation:waPulse 2.6s infinite;
+}
+.wa-float svg{width:30px;height:30px;color:#06351a}
+@keyframes waPulse{0%{box-shadow:0 0 0 0 rgba(37,211,102,.45)}70%{box-shadow:0 0 0 16px rgba(37,211,102,0)}100%{box-shadow:0 0 0 0 rgba(37,211,102,0)}}
+
+/* ---------- Fade-in on scroll ---------- */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+
+/* ---------- Responsive ---------- */
+@media(max-width:980px){
+  .hero-inner{grid-template-columns:1fr;gap:36px}
+  .hero-art{order:-1;max-width:260px;margin:0 auto}
+  .services-grid{grid-template-columns:repeat(2,1fr)}
+  .why-grid{grid-template-columns:repeat(2,1fr)}
+  .steps{grid-template-columns:1fr}
+  .step .arrow{display:none}
+  .contact-grid{grid-template-columns:1fr}
+}
+@media(max-width:680px){
+  section{padding:68px 0}
+  .hero{padding:80px 0 70px}
+  .header-actions .phone-text,.header-actions .btn-ghost{display:none}
+  .services-grid{grid-template-columns:1fr}
+  .why-grid{grid-template-columns:1fr}
+  .wa-float{display:flex}
+  .hero-cta .btn{flex:1 1 auto;justify-content:center}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .reveal{opacity:1;transform:none;transition:none}
+  .wa-float{animation:none}
+  .btn:hover,.service-card:hover{transform:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header class="header" id="top">
+  <div class="container header-inner">
+    <a href="#top" class="logo" aria-label="Stern Handyshop Startseite">
+      <span class="mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.6 6.3L21 9l-5 4.2L17.5 20 12 16.4 6.5 20 8 13.2 3 9l6.4-.7z"/></svg>
+      </span>
+      Stern <b>Handyshop</b>
+    </a>
+    <div class="header-actions">
+      <a class="phone-link phone-text" href="tel:+496419311499">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>
+        +49 641 9311499
+      </a>
+      <a class="btn btn-primary" href="tel:+496419311499">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>
+        Jetzt anrufen
+      </a>
+      <a class="btn btn-wa" href="https://wa.me/4915777777007" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M.06 24l1.68-6.13a11.8 11.8 0 0 1-1.58-5.9C.16 5.36 5.5 0 12.06 0a11.8 11.8 0 0 1 8.4 3.49 11.8 11.8 0 0 1 3.48 8.41c0 6.55-5.35 11.9-11.9 11.9a11.9 11.9 0 0 1-5.7-1.45L.06 24zM6.6 20.13c1.68.99 3.28 1.59 5.45 1.59 5.45 0 9.9-4.43 9.9-9.88a9.86 9.86 0 0 0-9.88-9.9c-5.46 0-9.9 4.44-9.9 9.89 0 2.28.67 3.99 1.79 5.78l-.99 3.63 3.63-1.11zM17.95 14.6c-.07-.12-.27-.2-.57-.35-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.65.07-.3-.15-1.25-.46-2.39-1.47-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.21-.24-.58-.49-.5-.67-.51l-.57-.01c-.2 0-.52.07-.79.37-.27.3-1.04 1.01-1.04 2.48 0 1.46 1.06 2.87 1.21 3.07.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.62.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2.01-1.41.25-.7.25-1.29.17-1.41z"/></svg>
+        WhatsApp
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="start">
+  <div class="hero-bg" aria-hidden="true">
+    <div class="grid"></div>
+    <div class="glow"></div>
+  </div>
+  <div class="container hero-inner">
+    <div class="hero-copy">
+      <span class="badge"><span class="dot"></span> Gleichtags-Service möglich</span>
+      <h1>Ihr Handy ist kaputt?<br><span class="hl">Wir reparieren es</span> — schnell, günstig, professionell.</h1>
+      <p class="lead">Display, Akku, Ladeport oder Wasserschaden — viele Reparaturen erledigen wir noch am selben Tag. Mit Originalteilen und Garantie.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="tel:+496419311499">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>
+          Jetzt anrufen
+        </a>
+        <a class="btn btn-wa" href="https://wa.me/4926198862086" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M.06 24l1.68-6.13a11.8 11.8 0 0 1-1.58-5.9C.16 5.36 5.5 0 12.06 0a11.8 11.8 0 0 1 8.4 3.49 11.8 11.8 0 0 1 3.48 8.41c0 6.55-5.35 11.9-11.9 11.9a11.9 11.9 0 0 1-5.7-1.45L.06 24zM6.6 20.13c1.68.99 3.28 1.59 5.45 1.59 5.45 0 9.9-4.43 9.9-9.88a9.86 9.86 0 0 0-9.88-9.9c-5.46 0-9.9 4.44-9.9 9.89 0 2.28.67 3.99 1.79 5.78l-.99 3.63 3.63-1.11zM17.95 14.6c-.07-.12-.27-.2-.57-.35-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.65.07-.3-.15-1.25-.46-2.39-1.47-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.21-.24-.58-.49-.5-.67-.51l-.57-.01c-.2 0-.52.07-.79.37-.27.3-1.04 1.01-1.04 2.48 0 1.46 1.06 2.87 1.21 3.07.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.62.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2.01-1.41.25-.7.25-1.29.17-1.41z"/></svg>
+          WhatsApp schreiben
+        </a>
+      </div>
+      <div class="hero-trust">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Originalteile</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Garantie auf Reparaturen</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Zertifizierte Techniker</span>
+      </div>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <!-- Pure SVG: smartphone on a repair bench with a precision screwdriver -->
+      <svg viewBox="0 0 300 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="phone" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#2A2A3A"/><stop offset="1" stop-color="#15151F"/>
+          </linearGradient>
+          <linearGradient id="scr" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#3A86FF" stop-opacity=".35"/><stop offset="1" stop-color="#3A86FF" stop-opacity=".05"/>
+          </linearGradient>
+        </defs>
+        <!-- phone body -->
+        <rect x="70" y="30" width="160" height="300" rx="28" fill="url(#phone)" stroke="#3A86FF" stroke-opacity=".4" stroke-width="2"/>
+        <rect x="82" y="50" width="136" height="260" rx="16" fill="url(#scr)" stroke="#3A86FF" stroke-opacity=".25"/>
+        <!-- camera notch -->
+        <rect x="130" y="40" width="40" height="6" rx="3" fill="#0c0c14"/>
+        <!-- diagnostic lines on screen -->
+        <g stroke="#3A86FF" stroke-opacity=".55" stroke-width="3" stroke-linecap="round">
+          <line x1="100" y1="80" x2="170" y2="80"/>
+          <line x1="100" y1="100" x2="150" y2="100"/>
+        </g>
+        <!-- checkmark badge -->
+        <circle cx="150" cy="185" r="42" fill="#3A86FF" fill-opacity=".12" stroke="#3A86FF" stroke-width="2"/>
+        <path d="M132 186l12 12 24-26" stroke="#3A86FF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <!-- signal/health bars -->
+        <g fill="#3A86FF" fill-opacity=".7">
+          <rect x="110" y="250" width="14" height="20" rx="2"/>
+          <rect x="132" y="240" width="14" height="30" rx="2"/>
+          <rect x="154" y="228" width="14" height="42" rx="2"/>
+          <rect x="176" y="216" width="14" height="54" rx="2"/>
+        </g>
+        <!-- precision screwdriver -->
+        <g transform="rotate(38 250 120)">
+          <rect x="238" y="40" width="24" height="90" rx="10" fill="#262633" stroke="#3A86FF" stroke-opacity=".4"/>
+          <rect x="246" y="128" width="8" height="70" rx="2" fill="#9aa0b5"/>
+          <rect x="247" y="196" width="6" height="18" fill="#3A86FF"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LEISTUNGEN ============ -->
+<section id="leistungen">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Leistungen</span>
+      <h2 class="section-title">Unsere Reparaturen — wie eine Werkstatt-Karte</h2>
+      <p class="section-sub">Klar, ehrlich, festpreisorientiert. Für nahezu jedes Smartphone-Modell. Fragen Sie uns einfach nach Ihrem Gerät.</p>
+    </div>
+    <div class="services-grid">
+
+      <article class="service-card reveal">
+        <div class="service-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M9 6l6 6M15 6l-3 3"/></svg></div>
+        <h3>Display-Reparatur</h3>
+        <p>Gesprungenes Display? Gleicher Tag, Originalteile.</p>
+      </article>
+
+      <article class="service-card reveal">
+        <div class="service-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="17" height="10" rx="2.5"/><path d="M22 10v4"/><path d="M7 12h5"/></svg></div>
+        <h3>Akku-Austausch</h3>
+        <p>Schnelle Entladung? Neuer Akku mit Garantie.</p>
+      </article>
+
+      <article class="service-card reveal">
+        <div class="service-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4.5 13.5H11l-1 8.5 8.5-11.5H12z"/></svg></div>
+        <h3>Ladeport-Reparatur</h3>
+        <p>Lädt nicht mehr? Wir beheben das Problem sofort.</p>
+      </article>
+
+      <article class="service-card reveal">
+        <div class="service-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="2.5"/><circle cx="12" cy="13" r="4"/><path d="M7 6l1.5-3h7L17 6"/></svg></div>
+        <h3>Kamera-Reparatur</h3>
+        <p>Unscharfe Fotos? Kamera wieder wie neu.</p>
+      </article>
+
+      <article class="service-card reveal">
+        <div class="service-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5C12 2.5 5 10 5 15a7 7 0 0 0 14 0c0-5-7-12.5-7-12.5z"/></svg></div>
+        <h3>Wasserschaden</h3>
+        <p>Schnell handeln — wir retten Ihr Gerät.</p>
+      </article>
+
+      <article class="service-card reveal">
+        <div class="service-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></div>
+        <h3>Datenrettung</h3>
+        <p>Wichtige Daten verloren? Wir holen sie zurück.</p>
+      </article>
+
+      <article class="service-card reveal">
+        <div class="service-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a9 9 0 0 1 0 14"/></svg></div>
+        <h3>Lautsprecher &amp; Mikrofon</h3>
+        <p>Kein Ton? Wir sorgen für klaren Sound.</p>
+      </article>
+
+      <article class="service-card reveal">
+        <div class="service-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="1.5"/><path d="M10 2v3M14 2v3M10 19v3M14 19v3M2 10h3M2 14h3M19 10h3M19 14h3"/></svg></div>
+        <h3>Motherboard-Reparatur</h3>
+        <p>Startet nicht mehr? Wir retten das Herzstück.</p>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ WARUM WIR ============ -->
+<section class="why" id="warum">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Warum Stern Handyshop</span>
+      <h2 class="section-title">Reparatur mit Werkstatt-Standard</h2>
+      <p class="section-sub">Vier Gründe, warum Kundinnen und Kunden uns ihr Gerät anvertrauen.</p>
+    </div>
+    <div class="why-grid">
+      <div class="why-item reveal">
+        <div class="why-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l7 4v6c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <h3>Zertifizierte Techniker</h3>
+        <p>Geschultes Fachpersonal mit langjähriger Erfahrung.</p>
+      </div>
+      <div class="why-item reveal">
+        <div class="why-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 7.3L12 2 3.5 7.3v9.4L12 22l8.5-5.3z"/><path d="M12 12l8.5-4.7M12 12v10M12 12L3.5 7.3"/></svg></div>
+        <h3>Originalteile</h3>
+        <p>Hochwertige Ersatzteile in geprüfter Qualität.</p>
+      </div>
+      <div class="why-item reveal">
+        <div class="why-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M9 14.5L8 22l4-2 4 2-1-7.5"/></svg></div>
+        <h3>Garantie auf Reparaturen</h3>
+        <p>Auf jede Reparatur erhalten Sie unsere Garantie.</p>
+      </div>
+      <div class="why-item reveal">
+        <div class="why-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+        <h3>Gleichtags-Service möglich</h3>
+        <p>Viele Reparaturen noch am selben Tag erledigt.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SO FUNKTIONIERT ES ============ -->
+<section id="ablauf">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">So funktioniert es</span>
+      <h2 class="section-title">In drei Schritten zum reparierten Gerät</h2>
+      <p class="section-sub">Kein Termin nötig — kommen Sie einfach vorbei oder rufen Sie kurz an.</p>
+    </div>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="num">Schritt</div>
+        <h3>Vorbeikommen oder anrufen</h3>
+        <p>Bringen Sie Ihr Gerät vorbei oder kontaktieren Sie uns telefonisch bzw. per WhatsApp.</p>
+        <span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </div>
+      <div class="step reveal">
+        <div class="num">Schritt</div>
+        <h3>Kostenlose Diagnose</h3>
+        <p>Wir prüfen Ihr Gerät und nennen Ihnen einen transparenten Festpreis — unverbindlich.</p>
+        <span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </div>
+      <div class="step reveal">
+        <div class="num">Schritt</div>
+        <h3>Reparatur noch heute</h3>
+        <p>In den meisten Fällen ist Ihr Smartphone noch am selben Tag wieder einsatzbereit.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ UNSERE STANDORTE & KONTAKT ============ -->
+<!-- Unified "find your branch" section. City pills (static) drive ONE panel
+     (#locPanel) that is rendered client-side from the CITIES data in the
+     script below: address card(s) + opening hours + a dynamically built
+     Google-Maps embed (no API key). Call/WhatsApp buttons use GENERAL
+     company contact placeholders (see CONTACT in the script). -->
+<section class="why" id="standorte">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">Filialen &amp; Kontakt</span>
+      <h2 class="section-title">Finden Sie Ihre Filiale</h2>
+      <p class="section-sub">Mit mehreren Filialen in ganz Deutschland für Sie da. Wählen Sie Ihre Stadt — Adresse, Öffnungszeiten und Anfahrt auf einen Blick.</p>
+    </div>
+
+    <div class="loc-pills reveal" role="tablist" aria-label="Stadt auswählen">
+      <button class="loc-pill" role="tab" data-city="giessen" aria-selected="true">Gießen</button>
+      <button class="loc-pill" role="tab" data-city="koblenz" aria-selected="false">Koblenz</button>
+      <button class="loc-pill" role="tab" data-city="mannheim" aria-selected="false">Mannheim</button>
+      <button class="loc-pill" role="tab" data-city="heidelberg" aria-selected="false">Heidelberg</button>
+      <button class="loc-pill" role="tab" data-city="pforzheim" aria-selected="false">Pforzheim</button>
+      <button class="loc-pill" role="tab" data-city="kassel" aria-selected="false">Kassel</button>
+      <button class="loc-pill" role="tab" data-city="saarbruecken" aria-selected="false">Saarbrücken</button>
+      <button class="loc-pill" role="tab" data-city="osnabrueck" aria-selected="false">Osnabrück</button>
+      <button class="loc-pill" role="tab" data-city="bremen" aria-selected="false">Bremen</button>
+      <button class="loc-pill" role="tab" data-city="koeln" aria-selected="false">Köln</button>
+      <button class="loc-pill" role="tab" data-city="leipzig" aria-selected="false">Leipzig</button>
+      <button class="loc-pill" role="tab" data-city="dresden" aria-selected="false">Dresden</button>
+      <button class="loc-pill" role="tab" data-city="erfurt" aria-selected="false">Erfurt</button>
+      <button class="loc-pill" role="tab" data-city="duesseldorf" aria-selected="false">Düsseldorf</button>
+    </div>
+
+    <div class="loc-stage reveal">
+      <div class="loc-panel active" id="locPanel" role="tabpanel" aria-live="polite"><!-- rendered by JS --></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-inner">
+      <a href="#top" class="logo">
+        <span class="mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.6 6.3L21 9l-5 4.2L17.5 20 12 16.4 6.5 20 8 13.2 3 9l6.4-.7z"/></svg>
+        </span>
+        Stern <b>Handyshop</b>
+      </a>
+      <nav class="footer-links">
+        <a href="#leistungen">Leistungen</a>
+        <a href="#warum">Warum wir</a>
+        <a href="#ablauf">Ablauf</a>
+        <a href="#standorte">Standorte &amp; Kontakt</a>
+        <!-- [4] PLACEHOLDER: legal pages required in Germany -->
+        <a href="#">Impressum</a>
+        <a href="#">Datenschutz</a>
+      </nav>
+    </div>
+    <div class="footer-copy">© 2026 Stern Handyshop &amp; Handy Reparatur · Marktplatz 12, 35390 Gießen · Alle Rechte vorbehalten.</div>
+  </div>
+</footer>
+
+<!-- Floating WhatsApp (mobile only) -->
+<a class="wa-float" href="https://wa.me/4926198862086" target="_blank" rel="noopener" aria-label="WhatsApp Chat öffnen">
+  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M.06 24l1.68-6.13a11.8 11.8 0 0 1-1.58-5.9C.16 5.36 5.5 0 12.06 0a11.8 11.8 0 0 1 8.4 3.49 11.8 11.8 0 0 1 3.48 8.41c0 6.55-5.35 11.9-11.9 11.9a11.9 11.9 0 0 1-5.7-1.45L.06 24zM6.6 20.13c1.68.99 3.28 1.59 5.45 1.59 5.45 0 9.9-4.43 9.9-9.88a9.86 9.86 0 0 0-9.88-9.9c-5.46 0-9.9 4.44-9.9 9.89 0 2.28.67 3.99 1.79 5.78l-.99 3.63 3.63-1.11zM17.95 14.6c-.07-.12-.27-.2-.57-.35-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.65.07-.3-.15-1.25-.46-2.39-1.47-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.21-.24-.58-.49-.5-.67-.51l-.57-.01c-.2 0-.52.07-.79.37-.27.3-1.04 1.01-1.04 2.48 0 1.46 1.06 2.87 1.21 3.07.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.62.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2.01-1.41.25-.7.25-1.29.17-1.41z"/></svg>
+</a>
+
+<script>
+/* ---------- Header shadow on scroll ---------- */
+const header = document.querySelector('.header');
+const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 8);
+onScroll();
+window.addEventListener('scroll', onScroll, {passive:true});
+
+/* ---------- Fade-in on scroll (IntersectionObserver) ---------- */
+const reveals = document.querySelectorAll('.reveal');
+if ('IntersectionObserver' in window){
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting){
+        // tiny stagger for grids
+        e.target.style.transitionDelay = (Math.min(i,4) * 60) + 'ms';
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, {threshold:.12, rootMargin:'0px 0px -40px 0px'});
+  reveals.forEach(el => io.observe(el));
+} else {
+  reveals.forEach(el => el.classList.add('in'));
+}
+
+/* ====================================================================
+   STANDORTE & KONTAKT — client-side branch directory
+   One panel (#locPanel) is rebuilt whenever a city pill is clicked:
+   address card(s) + opening hours + a dynamically generated Google Maps
+   embed. No frameworks, no reload.
+   ==================================================================== */
+
+/* GENERAL company contact — PLACEHOLDERS, swap these in one place.
+   Branch-specific numbers are intentionally NOT used here because most
+   branches share the general line (only Gießen Shop 1 has its own,
+   shown on its card). */
+const CONTACT = {
+  phoneDisplay: '+49 641 9311499',
+  phoneHref:    '+49 641 9311499',   // used in tel:
+  email:        'info@stern-handyshop.de',           // used in mailto:
+  whatsapp:     '4915777777007'  // used in wa.me/
+};
+
+const HOURS_TEXT = 'Mo–Sa 09:00–21:00';
+
+/* Each city: list of shops. A shop with `placeholder:true` has no address yet. */
+const CITIES = {
+  giessen:{ name:'Gießen', shops:[
+    {label:'Shop 1', street:'Marktplatz 12', zip:'35390 Gießen', services:'Prepaid Sim Karten, Handy An-und-Verkauf, Reparatur, Handy Zubehör aller Art', phone:'+49 641 9311499', email:'giessen@stern-handyshop.de'},
+    {label:'Shop 2', street:'Neue Bäue 22', zip:'35390 Gießen', services:'Prepaid Sim Karten, Reparatur, Handy Zubehör aller Art'},
+    {label:'Shop 3', street:'Seltersweg 69', zip:'35390 Gießen', services:'Prepaid Sim Karten, Reparatur, Handy Zubehör aller Art'}
+  ]},
+  koblenz:{ name:'Koblenz', shops:[
+    {label:'Shop 1', street:'Altlöhrtor 2-4', zip:'56068 Koblenz', services:'Handy An-und-Verkauf, Reparatur, Handy Zubehör aller Art, Prepaid Sim Karten'},
+    {label:'Shop 2', street:'Löhrstraße 71', zip:'56068 Koblenz', services:'Handy An-und-Verkauf, Reparatur, Handy Zubehör aller Art, Prepaid Sim Karten'}
+  ]},
+  mannheim:{ name:'Mannheim', shops:[
+    {label:'Shop 1', street:'Q1, 7', zip:'68161 Mannheim', services:'Prepaid Sim Karten, Handy An-und-Verkauf, Reparatur, Handy Zubehör aller Art'},
+    {label:'Shop 2', street:'S1, 7', zip:'68161 Mannheim', services:'Prepaid Sim Karten, Reparatur, Handy Zubehör aller Art'},
+    {label:'Shop 3', street:'P6 1-2', zip:'68161 Mannheim', services:'Prepaid Sim Karten, Reparatur, Handy Zubehör aller Art'},
+    {label:'Shop 4', street:'P3 12-13', zip:'68161 Mannheim', services:'Prepaid Sim Karten, Reparatur, Handy Zubehör aller Art'}
+  ]},
+  heidelberg:{ name:'Heidelberg', shops:[
+    {label:'Shop 1', street:'Hauptstraße 20', zip:'69112 Heidelberg', services:'Prepaid Sim Karten, Reparatur, Handy Zubehör aller Art'},
+    {label:'Shop 2', street:'Hauptstraße 64-66', zip:'69117 Heidelberg', services:'Prepaid Sim Karten, Reparatur, Handy Zubehör aller Art'}
+  ]},
+  pforzheim:{ name:'Pforzheim', shops:[
+    {street:'Westliche Karl-Friedrich-Straße 39', zip:'75172 Pforzheim', services:'Prepaid Sim Karten, Reparatur, Handy Zubehör aller Art'}
+  ]},
+  kassel:{ name:'Kassel', shops:[
+    {label:'Shop 1', street:'Untere Königsstraße 60', zip:'34117 Kassel', services:'Prepaid Sim Karten, Handy An-und-Verkauf, Reparatur, Handy Zubehör aller Art'},
+    {label:'Shop 2', street:'Hedwigstraße 10-12', zip:'34117 Kassel', services:'Prepaid Sim Karten, Handy An-und-Verkauf, Reparatur, Handy Zubehör aller Art'}
+  ]},
+  saarbruecken:{ name:'Saarbrücken', shops:[
+    {street:'Bahnhofstraße 99', zip:'66111 Saarbrücken', services:'Prepaid Sim Karten, Handy An-und-Verkauf, Reparatur, Handy Zubehör aller Art'}
+  ]},
+  osnabrueck:{ name:'Osnabrück', shops:[
+    {street:'Große Straße 14', zip:'49074 Osnabrück', services:'Prepaid Sim Karten, Handy An-und-Verkauf, Reparatur, Handy Zubehör aller Art'}
+  ]},
+  bremen:{ name:'Bremen', shops:[
+    {label:'Shop 1', street:'Obernstraße 55-63', zip:'28195 Bremen', services:'Prepaid Sim Karten, Handy An-und-Verkauf, Reparatur, Handy Zubehör aller Art'},
+    {label:'Shop 2', street:'Sögestraße 29', zip:'28195 Bremen', services:'Prepaid Sim Karten, Handy An-und-Verkauf, Reparatur, Handy Zubehör aller Art'}
+  ]},
+  koeln:{ name:'Köln', shops:[
+    {street:'Hugo Passage (Neumarkt)', zip:'50667 Köln', services:'Prepaid Sim Karten, Handy An-und-Verkauf, Reparatur, Handy Zubehör aller Art'}
+  ]},
+  leipzig:{ name:'Leipzig', shops:[
+    {street:'Hainstraße 12-14', zip:'04109 Leipzig', services:'Prepaid Sim Karten, Handy An-und-Verkauf, Reparatur, Handy Zubehör aller Art'}
+  ]},
+  dresden:{ name:'Dresden', shops:[
+    {street:'Prager Straße 1C', zip:'01069 Dresden', services:'Prepaid Sim Karten, Handy An-und-Verkauf, Reparatur, Handy Zubehör aller Art'}
+  ]},
+  erfurt:{ name:'Erfurt', shops:[
+    {street:'Anger 15', zip:'99084 Erfurt', services:'Prepaid Sim Karten, Handy An-und-Verkauf, Reparatur, Handy Zubehör aller Art'}
+  ]},
+  duesseldorf:{ name:'Düsseldorf', shops:[
+    {street:'Schadowstraße 72', zip:'40212 Düsseldorf', services:'Prepaid Sim Karten, Handy An-und-Verkauf, Reparatur, Handy Zubehör aller Art'}
+  ]}
+};
+
+/* --- inline SVG icons (match the rest of the page) --- */
+const ICO = {
+  pin:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>',
+  clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+  phone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>',
+  phoneBtn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>',
+  mail:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>',
+  wa:    '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M.06 24l1.68-6.13a11.8 11.8 0 0 1-1.58-5.9C.16 5.36 5.5 0 12.06 0a11.8 11.8 0 0 1 8.4 3.49 11.8 11.8 0 0 1 3.48 8.41c0 6.55-5.35 11.9-11.9 11.9a11.9 11.9 0 0 1-5.7-1.45L.06 24zM6.6 20.13c1.68.99 3.28 1.59 5.45 1.59 5.45 0 9.9-4.43 9.9-9.88a9.86 9.86 0 0 0-9.88-9.9c-5.46 0-9.9 4.44-9.9 9.89 0 2.28.67 3.99 1.79 5.78l-.99 3.63 3.63-1.11zM17.95 14.6c-.07-.12-.27-.2-.57-.35-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.65.07-.3-.15-1.25-.46-2.39-1.47-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.21-.24-.58-.49-.5-.67-.51l-.57-.01c-.2 0-.52.07-.79.37-.27.3-1.04 1.01-1.04 2.48 0 1.46 1.06 2.87 1.21 3.07.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.62.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2.01-1.41.25-.7.25-1.29.17-1.41z"/></svg>'
+};
+
+/* live open status (Mo–Sa 09:00–21:00) */
+const NOW = new Date();
+const TODAY = NOW.getDay();                 // 0 = So
+const MINS = NOW.getHours()*60 + NOW.getMinutes();
+const IS_OPEN = TODAY !== 0 && MINS >= 9*60 && MINS < 21*60;
+const DAYS = [
+  {d:1,name:'Montag'},{d:2,name:'Dienstag'},{d:3,name:'Mittwoch'},
+  {d:4,name:'Donnerstag'},{d:5,name:'Freitag'},{d:6,name:'Samstag'},{d:0,name:'Sonntag'}
+];
+
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const telHref = s => 'tel:' + String(s).replace(/[^\d+]/g,'');
+
+function shopCard(cityName, shop){
+  const tag = esc(cityName) + (shop.label ? ' · ' + esc(shop.label) : '');
+  if (shop.placeholder){
+    return '<article class="loc-card">'
+      + '<span class="city-tag">' + ICO.pin + ' ' + tag + '</span>'
+      + '<h3>' + esc(shop.title || cityName) + '</h3>'
+      + '<p class="addr">Adresse wird ergänzt</p>'
+      + '<ul class="loc-meta"><li><span class="mi">' + ICO.clock + '</span> ' + HOURS_TEXT + '</li></ul>'
+      + '<span class="loc-note"><span class="dot"></span> Adresse wird ergänzt</span>'
+      + '</article>';
+  }
+  let meta = '<li><span class="mi">' + ICO.clock + '</span> ' + HOURS_TEXT + '</li>';
+  if (shop.phone) meta += '<li><span class="mi">' + ICO.phone + '</span> <a href="' + telHref(shop.phone) + '">' + esc(shop.phone) + '</a></li>';
+  if (shop.email) meta += '<li><span class="mi">' + ICO.mail + '</span> <a href="mailto:' + esc(shop.email) + '">' + esc(shop.email) + '</a></li>';
+  return '<article class="loc-card">'
+    + '<span class="city-tag">' + ICO.pin + ' ' + tag + '</span>'
+    + '<h3>' + esc(shop.street) + '</h3>'
+    + '<p class="addr">' + esc(shop.zip) + '</p>'
+    + (shop.services ? '<p class="services">' + esc(shop.services) + '</p>' : '')
+    + '<ul class="loc-meta">' + meta + '</ul>'
+    + '</article>';
+}
+
+function hoursTable(){
+  const rows = DAYS.map(x => {
+    const cls = x.d === TODAY ? ' class="today"' : '';
+    const val = x.d === 0 ? '<td class="closed">Geschlossen</td>' : '<td>09:00 – 21:00</td>';
+    return '<tr' + cls + '><td>' + x.name + '</td>' + val + '</tr>';
+  }).join('');
+  const pill = IS_OPEN ? '<span class="open-pill"><span class="dot"></span> Jetzt geöffnet</span>' : '';
+  return '<div class="panel">'
+    + '<h3>' + ICO.clock + ' Öffnungszeiten</h3>'
+    + '<table class="hours">' + rows + '</table>'
+    + pill
+    + '<div class="contact-actions">'
+    +   '<a class="btn btn-primary" href="' + telHref(CONTACT.phoneHref) + '">' + ICO.phoneBtn + ' Jetzt anrufen</a>'
+    +   '<a class="btn btn-wa" href="https://wa.me/' + encodeURIComponent(CONTACT.whatsapp) + '" target="_blank" rel="noopener">' + ICO.wa + ' WhatsApp</a>'
+    + '</div>'
+    + '<p class="loc-contact-note">Allgemeine Anfragen: <a href="mailto:' + esc(CONTACT.email) + '">' + esc(CONTACT.email) + '</a> · Tel. <a href="' + telHref(CONTACT.phoneHref) + '">' + esc(CONTACT.phoneDisplay) + '</a></p>'
+    + '</div>';
+}
+
+function mapBlock(city){
+  // use the first shop that has a real address
+  const withAddr = city.shops.find(s => !s.placeholder && s.street);
+  if (!withAddr){
+    return '<div class="loc-map-missing">Karte folgt, sobald die Adresse vorliegt.</div>';
+  }
+  const addr = withAddr.street + ', ' + withAddr.zip;
+  const src = 'https://maps.google.com/maps?q=' + encodeURIComponent(addr) + '&output=embed';
+  return '<div class="map-wrap"><iframe title="Standort Stern Handyshop — ' + esc(addr) + '" '
+    + 'src="' + src + '" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe></div>';
+}
+
+function render(cityKey){
+  const city = CITIES[cityKey];
+  const panel = document.getElementById('locPanel');
+  if (!city || !panel) return;
+  const cards = city.shops.map(s => shopCard(city.name, s)).join('');
+  panel.innerHTML =
+      '<div class="loc-cards">' + cards + '</div>'
+    + '<div class="loc-info">' + hoursTable() + mapBlock(city) + '</div>';
+  // restart the fade
+  panel.classList.remove('active');
+  void panel.offsetWidth;
+  panel.classList.add('active');
+}
+
+(function(){
+  const pills = document.querySelectorAll('.loc-pill');
+  if (!pills.length) return;
+  pills.forEach(p => p.addEventListener('click', () => {
+    pills.forEach(x => x.setAttribute('aria-selected', x === p));
+    render(p.dataset.city);
+  }));
+  // default selected city = Gießen (the one marked aria-selected in markup)
+  const initial = document.querySelector('.loc-pill[aria-selected="true"]') || pills[0];
+  render(initial.dataset.city);
+})();
+</script>
+</body>
+</html>
